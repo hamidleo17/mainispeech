@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>I-Speech | Premium Text-to-Speech Engine</title>
+    
+    <!-- Custom SVG Favicon matching User soundwave logo design -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cdefs%3E%3ClinearGradient id='grad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%238b5cf6;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%23ec4899;stop-opacity:1' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='512' height='512' rx='128' fill='url(%23grad)' /%3E%3Cg fill='white'%3E%3Crect x='80' y='200' width='32' height='112' rx='16' /%3E%3Crect x='144' y='140' width='32' height='232' rx='16' /%3E%3Crect x='208' y='100' width='32' height='312' rx='16' /%3E%3Crect x='272' y='170' width='32' height='172' rx='16' /%3E%3Crect x='336' y='120' width='32' height='272' rx='16' /%3E%3Crect x='400' y='200' width='32' height='112' rx='16' /%3E%3C/g%3E%3C/svg%3E" />
+
+    <!-- Google Analytics (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      // Measurement ID placeholder to be filled by the user
+      gtag('config', 'G-XXXXXXXXXX');
+    </script>
+
+    <script>
+      (function() {
+        try {
+          var localFetch = window.fetch;
+          
+          // Redefine window.fetch to support setting/writing
+          try {
+            Object.defineProperty(window, 'fetch', {
+              get: function() {
+                return localFetch;
+              },
+              set: function(v) {
+                localFetch = v;
+              },
+              configurable: true,
+              enumerable: true
+            });
+          } catch (e) {
+            console.warn("Could not redefine web fetch on window:", e);
+          }
+
+          // Also handle globalThis fetch if available
+          if (typeof globalThis !== 'undefined' && globalThis !== window) {
+            try {
+              Object.defineProperty(globalThis, 'fetch', {
+                get: function() {
+                  return localFetch;
+                },
+                set: function(v) {
+                  localFetch = v;
+                },
+                configurable: true,
+                enumerable: true
+              });
+            } catch (e) {
+              console.warn("Could not redefine web fetch on globalThis:", e);
+            }
+          }
+
+          var proxyGlobal = new Proxy(window, {
+            get: function(target, prop) {
+              if (prop === 'fetch') {
+                return localFetch;
+              }
+              var val = target[prop];
+              if (typeof val === 'function') {
+                if (/\{\s*\[native code\]\s*\}/.test(val.toString())) {
+                  return val.bind(target);
+                }
+              }
+              return val;
+            },
+            set: function(target, prop, value) {
+              if (prop === 'fetch') {
+                localFetch = value;
+                return true;
+              }
+              try {
+                target[prop] = value;
+              } catch (e) {
+                // Ignore read-only errors on window in strict mode
+              }
+              return true;
+            }
+          });
+          Object.defineProperty(window, 'global', {
+            value: proxyGlobal,
+            writable: true,
+            configurable: true
+          });
+          if (typeof globalThis !== 'undefined') {
+            Object.defineProperty(globalThis, 'global', {
+              value: proxyGlobal,
+              writable: true,
+              configurable: true
+            });
+          }
+        } catch (e) {
+          console.warn("Global proxy wrapper initialization bypassed:", e);
+        }
+      })();
+
+      // Prevent and suppress benign WebSocket and Vite HMR errors in the preview environment
+      window.addEventListener('unhandledrejection', function(event) {
+        var str = String(event.reason || '');
+        var msg = (event.reason && event.reason.message) || '';
+        if (str.includes('WebSocket') || str.includes('websocket') || str.includes('vite') ||
+            msg.includes('WebSocket') || msg.includes('websocket') || msg.includes('vite')) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+      });
+      window.addEventListener('error', function(event) {
+        var str = String(event.error || '');
+        var msg = event.message || '';
+        if (str.includes('WebSocket') || str.includes('websocket') || str.includes('vite') ||
+            msg.includes('WebSocket') || msg.includes('websocket') || msg.includes('vite')) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+      });
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+

@@ -1,0 +1,10 @@
+{
+  "name": "ispeech",
+  "description": "A premium, Apple-inspired, completely free text-to-speech engine powered by Google Cloud neural voices with offline fallback options.",
+  "requestFramePermissions": [
+    "microphone"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
